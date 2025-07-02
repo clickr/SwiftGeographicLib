@@ -10,7 +10,7 @@ SwiftGeographicLib is intended to provide a swift interface to the C++ Geographi
 
 Conversion between geographic coordinates
 
-This class stores a geographic position which may be set via the
+This struct stores a geographic position which may be set via the
 constructors or Reset via
 - latitude and longitude
 - UTM or UPS coordinates
