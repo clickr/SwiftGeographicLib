@@ -8,44 +8,76 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "SwiftGeographicLib",
-            targets: ["SwiftGeographicLib"]),
+            name: "Geodesic",
+            targets: ["Geodesic"]),
+        .library(
+            name: "GeodesicLine",
+            targets: ["GeodesicLine"]),
+        .library(
+            name: "GeographicLib",
+            targets: ["GeographicLib"]),
+        .library(
+            name: "MagneticModel",
+            targets: ["MagneticModel"]),
+        .library(
+            name: "TransverseMercator",
+            targets: ["TransverseMercator"]),
+        .library(
+            name: "Utility",
+            targets: ["Utility"]
+        ),
+        .library(
+            name: "UTMUPS",
+            targets: ["UTMUPS"])
     ],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-numerics", from: "1.0.0")],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "SwiftGeographicLib",
-            exclude: ["GeographicLib/AUTHORS",
-                      "GeographicLib/CMakeLists.txt",
-                      "GeographicLib/HOWTO-RELEASE.txt",
-                      "GeographicLib/LICENSE.txt",
-                      "GeographicLib/Makefile.am",
-                      "GeographicLib/NEWS",
-                      "GeographicLib/README.md",
-                      "GeographicLib/autogen.sh",
-                      "GeographicLib/cgi-bin",
-                      "GeographicLib/cmake",
-                      "GeographicLib/configure.ac",
-                      "GeographicLib/data-distrib",
-                      "GeographicLib/data-installer",
-                      "GeographicLib/develop/",
-                      "GeographicLib/doc",
-                      "GeographicLib/examples",
-                      "GeographicLib/experimental",
-                      "GeographicLib/include/Makefile.am",
-                      "GeographicLib/m4",
-                      "GeographicLib/makefile-admin",
-                      "GeographicLib/man",
-                      "GeographicLib/maxima",
-                      "GeographicLib/src/CMakeLists.txt",
-                      "GeographicLib/src/Makefile.am",
-                      "GeographicLib/tests",
-                      "GeographicLib/tools/",
-                      "GeographicLib/wrapper"],
+            name: "GeoConstants"),
+        .target(
+            name: "Geodesic",
+            dependencies: ["GeographicLib", "GeographicError"],
+            swiftSettings: [.interoperabilityMode(.Cxx)]),
+        .target(
+            name: "GeodesicLine",
+            dependencies: ["GeographicLib", "Geodesic", "GeographicError", "GeoConstants"],
+            swiftSettings: [.interoperabilityMode(.Cxx)]),
+        .target(
+            name: "GeographicError"),
+        .target(
+            name: "GeographicLib",
+            exclude: ["AUTHORS",
+                      "CMakeLists.txt",
+                      "HOWTO-RELEASE.txt",
+                      "LICENSE.txt",
+                      "Makefile.am",
+                      "include/Makefile.am",
+                      "NEWS",
+                      "README.md",
+                      "autogen.sh",
+                      "cgi-bin",
+                      "cmake",
+                      "configure.ac",
+                      "data-distrib",
+                      "data-installer",
+                      "develop/",
+                      "doc",
+                      "examples",
+                      "experimental",
+                      "include/Makefile.am",
+                      "m4",
+                      "makefile-admin",
+                      "man",
+                      "maxima",
+                      "src/CMakeLists.txt",
+                      "src/Makefile.am",
+                      "tests",
+                      "tools/",
+                      "wrapper"],
+            sources: ["src"],
             cxxSettings: [
-                .headerSearchPath("./extra/"),
-                .headerSearchPath("./GeographicLib/include/"),
+                .headerSearchPath("include"),
                 .define("GEOGRAPHICLIB_VERSION_STRING", to: "\"2.5\""),
                 .define("GEOGRAPHICLIB_VERSION_MAJOR", to: "2"),
                 .define("GEOGRAPHICLIB_VERSION_MINOR", to: "5"),
@@ -53,13 +85,58 @@ let package = Package(
                 .define("GEOGRAPHICLIB_DATA", to: "\"/usr/local/share/GeographicLib\""),
                 .define("GEOGRAPHICLIB_HAVE_LONG_DOUBLE", to: "0"),
                 .define("GEOGRAPHICLIB_WORDS_BIGENDIAN", to: "0"),
-                .define("GEOGRAPHICLIB_PRECISION", to: "3"),
+                .define("GEOGRAPHICLIB_PRECISION", to: "2"),
                 .define("GEOGRAPHICLIB_SHARED_LIB", to: "0")
             ]),
-        .testTarget(
-            name: "SwiftGeographicLibTests",
-            dependencies: ["SwiftGeographicLib"]
+        .target(
+            name: "MagneticModel",
+            dependencies: ["GeographicLib"],
+            resources: [.process("Resources")],
+            swiftSettings: [.interoperabilityMode(.Cxx)]),
+        .target(
+            name: "Rumb",
+            dependencies: ["GeographicLib", "GeographicError"],
+            swiftSettings: [.interoperabilityMode(.Cxx)]
         ),
+        .target(
+            name: "TransverseMercator",
+            dependencies: ["GeographicLib", "GeoConstants", "GeographicError"],
+            swiftSettings: [.interoperabilityMode(.Cxx)]),
+        .target(
+            name: "Utility",
+            dependencies: ["GeographicLib"],
+            swiftSettings: [.interoperabilityMode(.Cxx)]
+        ),
+        .target(
+            name: "UTMUPS",
+            dependencies: ["GeographicLib", "TransverseMercator", "GeographicError"],
+            swiftSettings: [.interoperabilityMode(.Cxx)]),
+        .testTarget(
+            name: "GeoConstantsTests",
+            dependencies: ["GeographicLib", "GeoConstants"],
+            swiftSettings: [.interoperabilityMode(.Cxx)]
+        ),
+        .testTarget(
+            name: "GeodesicTests",
+            dependencies: ["Geodesic", .product(name: "RealModule", package: "swift-numerics")],
+            swiftSettings: [.interoperabilityMode(.Cxx)]),
+        .testTarget(
+            name: "GeographicLibTests",
+            dependencies: ["GeographicLib", .product(name: "RealModule", package: "swift-numerics")],
+            swiftSettings: [.interoperabilityMode(.Cxx)]),
+        .testTarget(
+            name: "MagneticModelTests",
+            dependencies: ["MagneticModel", .product(name: "RealModule", package: "swift-numerics")],
+            swiftSettings: [.interoperabilityMode(.Cxx)]),
+        .testTarget(
+            name: "UtilityTests",
+            dependencies: ["Utility", .product(name: "RealModule", package: "swift-numerics")],
+            swiftSettings: [.interoperabilityMode(.Cxx)]
+        ),
+        .testTarget(
+            name: "UTMUPSTests",
+            dependencies: ["UTMUPS", .product(name: "RealModule", package: "swift-numerics")],
+            swiftSettings: [.interoperabilityMode(.Cxx)])
     ],
     cxxLanguageStandard: .cxx20
 )
