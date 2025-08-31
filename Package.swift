@@ -131,6 +131,9 @@ let package = Package(
         .testTarget(
             name: "MagneticModelTests",
             dependencies: ["MagneticModel", .product(name: "RealModule", package: "swift-numerics")],
+            exclude: [
+              "gen-test.sh"
+            ],
             swiftSettings: [.interoperabilityMode(.Cxx)]),
         .testTarget(
             name: "UtilityTests",

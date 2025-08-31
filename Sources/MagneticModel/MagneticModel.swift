@@ -8,7 +8,7 @@
 import Foundation
 @preconcurrency import GeographicLib
 import CoreLocation
-import GeographicError
+@_exported import GeographicError
 
 public enum MagneticModelError: Error {
     case modelNotFound
