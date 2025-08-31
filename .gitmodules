@@ -1,4 +1,0 @@
-[submodule "Sources/GeographicLib"]
-	path = Sources/GeographicLib
-	url = https://github.com/clickr/geographiclib.git
-	branch = swift-package
