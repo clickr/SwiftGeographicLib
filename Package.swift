@@ -14,6 +14,10 @@ let package = Package(
             name: "GeodesicLine",
             targets: ["GeodesicLine"]),
         .library(
+            name: "GeographicError",
+            targets: ["GeographicError"]
+        ),
+        .library(
             name: "GeographicLib",
             targets: ["GeographicLib"]),
         .library(

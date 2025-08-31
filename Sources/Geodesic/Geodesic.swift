@@ -5,7 +5,7 @@
 //  Created by David Hart on 29/7/2025.
 //
 
-import GeographicLib
+@preconcurrency import GeographicLib
 import CoreLocation
 @_exported import GeographicError
 

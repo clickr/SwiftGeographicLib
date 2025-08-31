@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import GeographicLib
+@preconcurrency import GeographicLib
 import CoreLocation
 import GeographicError
 
