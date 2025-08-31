@@ -94,7 +94,7 @@ let package = Package(
             ]),
         .target(
             name: "MagneticModel",
-            dependencies: ["GeographicLib"],
+            dependencies: ["GeographicLib", "GeographicError"],
             resources: [.process("Resources")],
             swiftSettings: [.interoperabilityMode(.Cxx)]),
         .target(
