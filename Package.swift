@@ -93,6 +93,11 @@ let package = Package(
                 .define("GEOGRAPHICLIB_SHARED_LIB", to: "0")
             ]),
         .target(
+            name: "Intersect",
+            dependencies: ["GeographicLib", "GeographicError", "GeodesicLine"],
+            swiftSettings: [.interoperabilityMode(.Cxx)]
+        ),
+        .target(
             name: "MagneticModel",
             dependencies: ["GeographicLib", "GeographicError"],
             resources: [.process("Resources")],
@@ -118,6 +123,11 @@ let package = Package(
         .testTarget(
             name: "GeoConstantsTests",
             dependencies: ["GeographicLib", "GeoConstants"],
+            swiftSettings: [.interoperabilityMode(.Cxx)]
+        ),
+        .testTarget(
+            name: "GeodesicLineTests",
+            dependencies: ["GeodesicLine"],
             swiftSettings: [.interoperabilityMode(.Cxx)]
         ),
         .testTarget(

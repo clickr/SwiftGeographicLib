@@ -36,6 +36,26 @@ public enum UTMError : Error {
     case northingOutOfBounds(northing: Double)
 }
 
+/**
+ Represents a Universal Transverse Mercator (UTM) coordinate, providing methods to convert between latitude/longitude and UTM coordinates.
+
+ UTM is a global map projection system that divides the world into 60 longitudinal zones, each 6° wide, and projects coordinates onto a transverse Mercator projection for each zone. This struct encapsulates all necessary parameters for a single UTM coordinate, including:
+
+ - `zone`: The UTM longitudinal zone (valid range: 1...60)
+ - `hemisphere`: The hemisphere of the coordinate (.northern or .southern)
+ - `easting`: The easting value in meters within the zone
+ - `northing`: The northing value in meters within the zone
+ - `convergence`: The meridian convergence at this point, in degrees
+ - `scale`: The point scale factor at this location
+ - `locationCoordinate2D`: The original CLLocationCoordinate2D for reference
+
+ The `UTM` struct offers:
+ - Validation for legal zone, easting, and northing values (with support for both standard and stricter MGRS limits)
+ - Conversion from geographic (latitude, longitude) coordinates into UTM, and vice versa
+ - Support for direct initialization from UTM parameters or from Core Location coordinates
+
+ Throws errors if any of the zone, easting, or northing parameters are out of bounds.
+*/
 public struct UTM : UTMUPSCoordinate {
     public static func eastingLegalRange(mgrsLimits: Bool = false) -> ClosedRange<Double> {
         if mgrsLimits {
@@ -177,7 +197,21 @@ public struct UTM : UTMUPSCoordinate {
             throw CoordinateError.eastingOutOfBounds(easting: easting)
         }
     }
+
+    /**
+     Initializes a UTM coordinate from a `CLLocationCoordinate2D` value (latitude and longitude).
+
+     This convenience initializer uses the latitude and longitude from a Core Location coordinate to compute the corresponding UTM zone, easting, northing, and other properties. It routes the conversion through the dedicated geographic initializer.
+
+     - Parameters:
+        - coordinate: The Core Location coordinate containing latitude and longitude (in degrees).
+        - zoneSpec: (Optional) Controls standard or special zone assignment (default is `.utm`).
+        - mgrsLimits: (Optional) If true, applies stricter MGRS easting/northing limits.
+
+     - Throws: `CoordinateError.eastingOutOfBounds`, `CoordinateError.northingOutOfBounds`, or `CoordinateError.illegalLatitude` if the coordinate is invalid or out of UTM bounds.
+    */
     public init(coordinate: CLLocationCoordinate2D, zoneSpec: ZoneSpec = .utm, mgrsLimits: Bool = false) throws {
         try self.init(latitude: coordinate.latitude, longitude: coordinate.longitude, zoneSpec: zoneSpec, mgrsLimits: mgrsLimits)
     }
 }
+

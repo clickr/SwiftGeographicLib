@@ -11,6 +11,18 @@ import CoreLocation
 
 typealias Constants = GeographicLib.Constants
 
+/**
+ Represents geodetic calculations on an ellipsoidal earth model (such as WGS84), providing tools to solve direct and inverse geodesic problems.
+
+ `Geodesic` is a Swift wrapper over GeographicLib's geodesic functionality, allowing you to:
+ - Construct ellipsoid models with custom radii and flattening
+ - Calculate geodesic lines and solve direct (given starting point, azimuth, and distance) and inverse (given two points) problems
+ - Access commonly used geodesic calculations with the WGS84 ellipsoid
+
+ All calculations are performed using double-precision and can account for the Earth's flattening.
+
+ Usage is centered around geographic coordinates (latitude/longitude via CoreLocation's `CLLocationCoordinate2D`), and results include azimuths, arc lengths, distances, and destination points.
+*/
 public struct Geodesic : Sendable {
     /// A global instantiation of Geodesic with the parameters for the WGS84 ellipsoid.
     public static let WGS84 = Geodesic()
@@ -135,3 +147,4 @@ public struct Geodesic : Sendable {
         geoid = GeographicLib.Geodesic.WGS84().pointee
     }
 }
+

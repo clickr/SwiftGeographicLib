@@ -12,8 +12,17 @@ import Geodesic
 @_exported import GeographicError
 import GeoConstants
 
+/**
+ Represents a geodesic line segment on an ellipsoidal Earth model, enabling queries for coordinates and azimuths along the geodesic.
+
+ A `GeodesicLine` is constructed from either two coordinates (solving the inverse geodesic problem) or from a starting coordinate, initial azimuth, and distance (solving the direct geodesic problem). It provides:
+ - The total length of the geodesic segment
+ - Positions, azimuths, and arc length at any point along the geodesic
+
+ This struct acts as a Swift wrapper around GeographicLib's geodesic line functionality and uses double-precision calculations for high accuracy. All coordinates are expressed in `CLLocationCoordinate2D`.
+*/
 public struct GeodesicLine {
-    private let line : GeographicLib.GeodesicLine
+    public let line : GeographicLib.GeodesicLine
     /// GeodesicLine with start and end coordinates
     ///
     /// - Throws: `CoordinateError.illegalLatitude` if startCoordinate.latitude or endCoordinate.latitude not in -90&deg;...90&deg;
@@ -38,8 +47,13 @@ public struct GeodesicLine {
     public var length: Double {
         return line.Distance()
     }
-    
-    public func position(at distance: Double) -> (coordinate: CLLocationCoordinate2D, azimuth: Double, arcLength: Double) {
+    /// Get the position, azimuth, and arc length at a given distance on a GeodesicLine
+    /// - Parameter distance: distance in metres along the line. can be negative
+    /// - Returns: a tuple containing the computed coordinate (CLLocationCoordinate2D), azimuth (Double),
+    /// and arc length (Double)
+    public func position(at distance: Double) -> (coordinate: CLLocationCoordinate2D,
+                                                  azimuth: Double,
+                                                  arcLength: Double) {
         var lat: Double = .nan
         var lon: Double = .nan
         var azimuth: Double = .nan
@@ -47,4 +61,15 @@ public struct GeodesicLine {
         
         return (coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon), azimuth: azimuth, arcLength: arcLength)
     }
+    
+    public var origin : CLLocationCoordinate2D {
+        return CLLocationCoordinate2D(latitude: line.Latitude(), longitude: line.Longitude())
+    }
+    
+    public var azimuth : Double {
+        return line.Azimuth()
+    }
+    
+    public static let originUnit : GeodesicLine = try! GeodesicLine(startCoordinate: CLLocationCoordinate2D(latitude: 0, longitude: 0), azimuth: 0, distance: 1)
 }
+
