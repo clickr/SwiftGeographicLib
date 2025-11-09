@@ -129,6 +129,10 @@ public protocol UTMUPSCoordinate {
     var locationCoordinate2D : CLLocationCoordinate2D { get }
 }
 ```
+### XCode Project Package Dependency
+![Package Depnedency](images/XCode~Project~Package~Dependency.png)
+### XCode Build Settings
+![Build Settings](images/Swift~Compiler~-~Language.png)
 ### ``UTM``
 #### Example
 ```swift
